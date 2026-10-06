@@ -369,9 +369,36 @@
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 4px; }
+
+        #portrait-warning {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: rgba(10, 15, 18, 0.96);
+            z-index: 9999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem;
+            color: var(--neon-yellow);
+        }
+        @media screen and (orientation: portrait) and (max-width: 900px) {
+            #portrait-warning { display: flex !important; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="portrait-warning">
+        <div style="font-size: 5rem; margin-bottom: 1rem; animation: pulse-glow 1s infinite alternate;">🔄</div>
+        <h2 style="font-size: 2rem; font-weight: 900; color: var(--neon-green); margin-bottom: 1rem;">PUTAR PERANGKAT ANDA</h2>
+        <p style="font-size: 1.2rem; color: #fff; max-width: 400px; margin-bottom: 1.5rem;">
+            Aplikasi ini dirancang dalam <b>Mode Desktop & Orientasi Landscape</b> (Horizontal) untuk pengalaman bermain optimal.
+        </p>
+        <button class="btn primary" onclick="app.forceLandscape()">PAKSA MODE LANDSCAPE 🚀</button>
+    </div>
 
     <canvas id="bg-canvas"></canvas>
 
@@ -697,8 +724,50 @@
                 this.loadData();
                 this.buildVirtualKeyboard();
                 this.initFullscreenToggle();
+                this.initAutoLandscape();
                 this.showScreen('screen-landing');
                 BgEngine.init();
+            },
+
+            initAutoLandscape: function() {
+                const triggerAuto = () => {
+                    this.forceLandscape();
+                };
+
+                // Coba kunci orientasi secara langsung saat awal dimuat
+                triggerAuto();
+
+                // Tambahkan listener pada aktivitas/sentuhan pertama pengguna (karena browser memerlukan interaksi pengguna)
+                const interactionEvents = ['touchstart', 'touchend', 'pointerdown', 'click'];
+                const autoHandler = () => {
+                    triggerAuto();
+                };
+
+                interactionEvents.forEach(evt => {
+                    window.addEventListener(evt, autoHandler, { passive: true });
+                });
+            },
+
+            forceLandscape: function() {
+                // 1. Minta mode Fullscreen (Desktop Mode View)
+                if (!document.fullscreenElement) {
+                    const docEl = document.documentElement;
+                    const req = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+                    if (req) {
+                        req.call(docEl).catch(() => {});
+                    }
+                }
+
+                // 2. Kunci Orientasi ke Landscape
+                if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                    window.screen.orientation.lock('landscape').catch(() => {});
+                } else if (screen.lockOrientation) {
+                    screen.lockOrientation('landscape');
+                } else if (screen.mozLockOrientation) {
+                    screen.mozLockOrientation('landscape');
+                } else if (screen.msLockOrientation) {
+                    screen.msLockOrientation('landscape');
+                }
             },
 
             loadData: function() {
@@ -719,6 +788,8 @@
             },
 
             showScreen: function(id) {
+                this.forceLandscape();
+
                 document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
                 document.getElementById(id).classList.remove('hidden');
                 document.getElementById('virtual-keyboard').style.display = 'none';
