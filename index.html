@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BIO-HAZARD ZERO</title>
+    <style>
+        :root {
+            --bg-dark: #0a0f12;
+            --neon-green: #39ff14;
+            --neon-red: #ff073a;
+            --neon-blue: #00e5ff;
+            --neon-yellow: #fffb00;
+            --neon-purple: #bd00ff;
+            --glass-bg: rgba(10, 15, 18, 0.85);
+            --glass-border: rgba(57, 255, 20, 0.3);
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: #fff;
+            overflow: hidden;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .hidden { display: none !important; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .items-center { align-items: center; }
+        .justify-center { justify-content: center; }
+        .w-full { width: 100%; }
+        .h-full { height: 100%; }
+        .absolute { position: absolute; }
+        .relative { position: relative; }
+        .text-center { text-align: center; }
+        .z-10 { z-index: 10; }
+        .z-20 { z-index: 20; }
+        .z-50 { z-index: 50; }
+
+        .title-glitch {
+            font-size: 5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green), 0 0 40px var(--neon-green);
+            animation: pulse-glow 2s infinite alternate;
+            letter-spacing: 4px;
+        }
+
+        @keyframes pulse-glow {
+            0% { text-shadow: 0 0 10px var(--neon-green), 0 0 20px var(--neon-green); transform: scale(1); }
+            100% { text-shadow: 0 0 20px var(--neon-green), 0 0 40px var(--neon-green), 0 0 60px var(--neon-green); transform: scale(1.02); }
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+        .screen-shake { animation: shake 0.3s cubic-bezier(.36,.07,.19,.97) both; }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 0 20px rgba(57, 255, 20, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-card:hover {
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.4);
+            border-color: var(--neon-green);
+        }
+
+        .btn {
+            background: transparent;
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: bold;
+            padding: 0.8rem 1.8rem;
+            border: 2px solid var(--neon-green);
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.2);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn.primary {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px var(--neon-green);
+        }
+        .btn.danger {
+            border-color: var(--neon-red);
+            box-shadow: 0 0 10px rgba(255, 7, 58, 0.2);
+        }
+        .btn.danger.primary { background: var(--neon-red); color: #fff; box-shadow: 0 0 20px var(--neon-red); }
+        
+        .btn-tab {
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-tab.active {
+            background: var(--neon-green);
+            color: #000;
+            font-weight: bold;
+            border-color: var(--neon-green);
+            box-shadow: 0 0 15px var(--neon-green);
+        }
+
+        .grid-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            width: 85%;
+            max-width: 1100px;
+        }
+
+        .screen {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            background: radial-gradient(circle at center, #111a22 0%, #05080a 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            transition: opacity 0.3s ease;
+        }
+
+        #bg-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            z-index: 1;
+            opacity: 0.5;
+        }
+
+        input, select {
+            background: rgba(0,0,0,0.5);
+            border: 2px solid var(--glass-border);
+            color: var(--neon-green);
+            padding: 0.8rem 1rem;
+            font-size: 1.2rem;
+            border-radius: 10px;
+            margin: 8px 0;
+            width: 100%;
+            outline: none;
+            text-align: center;
+        }
+        input:focus { border-color: var(--neon-green); box-shadow: 0 0 15px var(--neon-green); }
+
+        /* Virtual Keyboard */
+        #virtual-keyboard {
+            position: absolute;
+            bottom: 4%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            padding: 12px;
+            border-radius: 15px;
+            z-index: 100;
+            display: none;
+            width: 90%;
+            max-width: 800px;
+        }
+        .vk-row { display: flex; justify-content: center; margin-bottom: 6px; gap: 6px; }
+        .vk-key {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.1s;
+        }
+        .vk-key:active { background: var(--neon-green); color: #000; transform: scale(0.9); }
+        .vk-key.wide { padding: 12px 30px; }
+
+        #secret-teacher-btn {
+            position: absolute;
+            top: 10px; right: 10px;
+            width: 50px; height: 50px;
+            opacity: 0;
+            z-index: 100;
+            cursor: pointer;
+        }
+
+        #custom-modal {
+            position: fixed; top:0; left:0; width:100vw; height:100vh;
+            background: rgba(0,0,0,0.85);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 999;
+        }
+        .modal-content {
+            background: var(--bg-dark);
+            border: 2px solid var(--neon-green);
+            padding: 2rem; border-radius: 15px; text-align: center;
+            box-shadow: 0 0 30px rgba(57, 255, 20, 0.4);
+            max-width: 500px;
+        }
+        .modal-title { font-size: 2rem; color: var(--neon-green); margin-bottom: 1rem; }
+        
+        .lb-container {
+            width: 85%;
+            max-width: 950px;
+            height: 58vh;
+            overflow-y: auto;
+            padding-right: 8px;
+        }
+
+        .lb-table { width: 100%; border-collapse: collapse; margin-top: 0.5rem; font-size: 1.1rem; }
+        .lb-table th, .lb-table td { padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .lb-table th { color: var(--neon-green); font-size: 1rem; letter-spacing: 1px; }
+
+        /* Diagram Batang (Bar Chart) Styles */
+        .chart-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+            padding: 5px 0;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(255,255,255,0.03);
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+            transition: all 0.3s ease;
+        }
+        .chart-row:hover {
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(57, 255, 20, 0.4);
+        }
+
+        .chart-rank {
+            font-size: 1.2rem;
+            font-weight: 900;
+            width: 36px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .chart-info {
+            width: 140px;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        .chart-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .chart-mode {
+            font-size: 0.75rem;
+            color: #888;
+            letter-spacing: 1px;
+        }
+
+        .chart-track {
+            flex-grow: 1;
+            height: 26px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 13px;
+            overflow: hidden;
+            position: relative;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .chart-bar {
+            height: 100%;
+            border-radius: 13px;
+            background: linear-gradient(90deg, var(--bar-color-start, #39ff14), var(--bar-color-end, #00e5ff));
+            box-shadow: 0 0 12px var(--bar-glow, rgba(57, 255, 20, 0.5));
+            width: 0%; /* Dynamic via JS animation */
+            transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .chart-value {
+            font-weight: bold;
+            font-size: 1.1rem;
+            min-width: 60px;
+            text-align: right;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        .podium-container {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            height: 320px;
+            gap: 18px;
+            margin-bottom: 2rem;
+            width: 90%;
+            max-width: 750px;
+        }
+
+        .podium-column {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            max-width: 140px;
+        }
+
+        .podium-bar {
+            width: 100%;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            transition: height 1s ease-out;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #000;
+            box-shadow: 0 -5px 25px rgba(255,255,255,0.2);
+            position: relative;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.3); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: var(--neon-green); border-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <div id="screen-landing" class="screen">
+        <div class="glass-card" style="padding: 1rem 3rem; margin-bottom: 1.5rem; border-color: var(--neon-blue); box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);">
+            <h3 style="color: #fff; font-size: 1.1rem; letter-spacing: 4px; text-align: center; margin-bottom: 5px; text-shadow: 0 0 5px #fff;">GAME EDUKASI KOLABORASI</h3>
+            <h2 style="color: var(--neon-blue); font-size: 2.5rem; font-weight: 900; letter-spacing: 3px; text-align: center; text-shadow: 0 0 15px var(--neon-blue);">SMK NEGERI 2 MANTANGAI</h2>
+        </div>
+        
+        <h1 class="title-glitch" style="font-size: 6rem; margin-bottom: 1rem; text-align: center; line-height: 1;">BIO-HAZARD ZERO</h1>
+        
+        <div style="background: var(--neon-red); color: white; padding: 10px 35px; font-size: 1.6rem; font-weight: bold; letter-spacing: 4px; transform: skew(-15deg); box-shadow: 0 0 30px var(--neon-red); margin-bottom: 3.5rem; border: 2px solid #fff;">
+            <div style="transform: skew(15deg); text-shadow: 2px 2px 0 #000;">🔥 EDISI: RABU SEMANGAT 🔥</div>
+        </div>
+
+        <button class="btn primary" style="font-size: 2.2rem; padding: 1.2rem 4.5rem; animation: pulse-glow 1s infinite alternate;" onclick="app.showScreen('screen-menu')">TAP TO START</button>
+        <button id="fullscreen-btn" class="btn" style="position: absolute; bottom: 20px; right: 20px; font-size: 0.9rem;">[ ] FULLSCREEN</button>
+    </div>
+
+    <div id="screen-menu" class="screen hidden">
+        <div id="secret-teacher-btn" onclick="app.handleSecretTap()"></div>
+        <h2 class="title-glitch" style="font-size: 3.8rem; margin-bottom: 2.5rem;">MAIN MENU</h2>
+        <div class="grid-menu">
+            <div class="glass-card text-center" style="cursor: pointer;" onclick="app.showScreen('screen-mode')">
+                <div style="font-size: 3.5rem; margin-bottom: 0.8rem;">🎮</div>
+                <h3 style="font-size: 1.8rem; color: var(--neon-green);">PLAY ARENA</h3>
+            </div>
+            <div class="glass-card text-center" style="cursor: pointer;" onclick="app.showLeaderboard()">
+                <div style="font-size: 3.5rem; margin-bottom: 0.8rem;">🏆</div>
+                <h3 style="font-size: 1.8rem; color: var(--neon-blue);">LEADERBOARD</h3>
+            </div>
+            <div class="glass-card text-center" style="cursor: pointer;" onclick="app.showScreen('screen-tutorial')">
+                <div style="font-size: 3.5rem; margin-bottom: 0.8rem;">📚</div>
+                <h3 style="font-size: 1.8rem; color: var(--neon-yellow);">HOW TO PLAY</h3>
+            </div>
+        </div>
+        <button class="btn" style="position: absolute; bottom: 30px; left: 30px;" onclick="app.showScreen('screen-landing')">⬅ BACK</button>
+        <div style="position: absolute; bottom: 10px; right: 20px; color: #555; font-size: 0.85rem;">Tap top-right corner 5x for Teacher Menu</div>
+    </div>
+
+    <div id="screen-mode" class="screen hidden">
+        <h2 class="title-glitch" style="font-size: 3.8rem; margin-bottom: 2.5rem;">SELECT MODE</h2>
+        <div class="grid-menu">
+            <div class="glass-card text-center" style="cursor: pointer;" onclick="app.setupPlayers(1)">
+                <h3 style="font-size: 2.2rem; color: var(--neon-green);">1 PLAYER</h3>
+                <p style="color:#aaa; margin-top:5px;">SOLO SPEEDRUN</p>
+            </div>
+            <div class="glass-card text-center" style="cursor: pointer;" onclick="app.setupPlayers(2)">
+                <h3 style="font-size: 2.2rem; color: var(--neon-blue);">2 PLAYERS</h3>
+                <p style="color:#aaa; margin-top:5px;">DUO BATTLE</p>
+            </div>
+            <div class="glass-card text-center" style="cursor: pointer;" onclick="app.setupPlayers(4)">
+                <h3 style="font-size: 2.2rem; color: var(--neon-red);">4 PLAYERS</h3>
+                <p style="color:#aaa; margin-top:5px;">CHAOS ARENA</p>
+            </div>
+        </div>
+        <button class="btn" style="position: absolute; bottom: 30px; left: 30px;" onclick="app.showScreen('screen-menu')">⬅ BACK</button>
+    </div>
+
+    <div id="screen-setup" class="screen hidden">
+        <h2 class="title-glitch" style="font-size: 3rem; margin-bottom: 1.8rem;">PRE-FLIGHT CHECK</h2>
+        
+        <div class="flex w-full justify-center" style="gap: 2rem; margin-bottom: 2rem;">
+            <div class="glass-card" style="min-width: 300px;" id="player-inputs-container"></div>
+            
+            <div class="glass-card flex-col items-center" style="min-width: 300px;">
+                <h3 style="color: var(--neon-yellow); margin-bottom: 0.8rem;">TIMER</h3>
+                <select id="timer-select">
+                    <option value="30">30 DETIK (Insane)</option>
+                    <option value="45" selected>45 DETIK (Normal)</option>
+                    <option value="60">60 DETIK (Endurance)</option>
+                </select>
+                
+                <h3 style="color: var(--neon-blue); margin-top: 1rem; margin-bottom: 0.8rem;">LEVEL SOAL</h3>
+                <select id="level-select">
+                    <option value="easy" selected>EASY</option>
+                    <option value="medium">MEDIUM</option>
+                    <option value="hard">HARD</option>
+                    <option value="all">CAMPURAN (ALL)</option>
+                </select>
+            </div>
+        </div>
+
+        <button class="btn primary" style="font-size: 1.8rem; padding: 0.9rem 3.5rem;" onclick="app.startGame()">INITIATE LAUNCH 🚀</button>
+        <button class="btn" style="position: absolute; bottom: 30px; left: 30px;" onclick="app.showScreen('screen-mode')">⬅ BACK</button>
+        
+        <div id="virtual-keyboard"></div>
+    </div>
+
+    <div id="screen-game" class="screen hidden" style="background: #000; justify-content: flex-start;">
+        <canvas id="game-canvas"></canvas>
+    </div>
+
+    <div id="screen-result" class="screen hidden">
+        <h1 class="title-glitch" style="font-size: 4.2rem; margin-bottom: 1.5rem;">MISSION OVER</h1>
+        
+        <!-- Podium Diagram Batang Hasil Pertandingan -->
+        <div id="result-podium" class="podium-container"></div>
+
+        <div class="flex" style="gap: 20px;">
+            <button class="btn primary" onclick="app.showScreen('screen-mode')">PLAY AGAIN</button>
+            <button class="btn" onclick="app.showScreen('screen-menu')">MAIN MENU</button>
+        </div>
+    </div>
+
+    <div id="screen-leaderboard" class="screen hidden">
+        <h2 class="title-glitch" style="font-size: 3.5rem; margin-bottom: 1rem;">HALL OF FAME</h2>
+        
+        <!-- View Switcher Tabs -->
+        <div class="flex" style="gap: 12px; margin-bottom: 1.2rem;">
+            <button id="tab-chart" class="btn-tab active" onclick="app.switchLeaderboardView('chart')">📊 DIAGRAM BATANG</button>
+            <button id="tab-table" class="btn-tab" onclick="app.switchLeaderboardView('table')">📋 TABEL SKOR</button>
+        </div>
+
+        <div class="glass-card lb-container">
+            <!-- Tampilan Diagram Batang (Bar Chart View) -->
+            <div id="lb-chart-view" class="chart-list"></div>
+
+            <!-- Tampilan Tabel (Table View) -->
+            <div id="lb-table-view" class="hidden">
+                <table class="lb-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 10%;">RANK</th>
+                            <th style="width: 40%; text-align: left;">PLAYER</th>
+                            <th style="width: 25%;">SKOR</th>
+                            <th style="width: 25%;">MODE</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lb-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <button class="btn" style="position: absolute; bottom: 25px; left: 30px;" onclick="app.showScreen('screen-menu')">⬅ BACK</button>
+        <button class="btn danger" style="position: absolute; bottom: 25px; right: 30px;" onclick="app.clearLeaderboard()">CLEAR DATA</button>
+    </div>
+
+    <div id="screen-tutorial" class="screen hidden">
+        <h2 class="title-glitch" style="font-size: 3.5rem; margin-bottom: 1.5rem;">HOW TO PLAY</h2>
+        <div class="glass-card" style="max-width: 750px; line-height: 1.8; font-size: 1.15rem;">
+            <p style="color: var(--neon-green); margin-bottom: 0.8rem;">1. Anda adalah peneliti di Lab Bio-Hazard.</p>
+            <p>2. Pertanyaan akan muncul di area bermain Anda.</p>
+            <p>3. <b>SEL VIRUS</b> yang berisi jawaban akan memantul di sekitar layar.</p>
+            <p>4. <b>TAP/SENTUH</b> virus dengan jawaban yang BENAR untuk membuat vaksin (+100 Poin).</p>
+            <p style="color: var(--neon-red); margin-bottom: 0.8rem;">5. AWAS! Menekan virus yang salah akan menyebarkan infeksi (-50 Poin).</p>
+            <p>6. Pemain dengan poin tertinggi saat waktu habis adalah Pemenangnya!</p>
+        </div>
+        <button class="btn primary" style="margin-top: 1.5rem;" onclick="app.showScreen('screen-menu')">UNDERSTOOD</button>
+    </div>
+
+    <div id="screen-teacher" class="screen hidden">
+        <h2 class="title-glitch" style="font-size: 2.8rem; color: var(--neon-red); margin-bottom: 1rem;">TEACHER DASHBOARD</h2>
+        <div class="glass-card" style="width: 90%; max-width: 1000px; height: 68vh; display: flex; flex-direction: column;">
+            <div style="display: flex; gap: 10px; margin-bottom: 1rem;">
+                <button class="btn primary" style="font-size: 0.9rem; padding: 0.5rem 1rem;" onclick="app.showAddQuestion()">+ TAMBAH SOAL</button>
+                <button class="btn" style="font-size: 0.9rem; padding: 0.5rem 1rem;" onclick="app.resetDefaultQuestions()">RESET KE DEFAULT</button>
+            </div>
+            <div style="flex-grow: 1; overflow-y: auto;">
+                <table class="lb-table">
+                    <thead><tr><th>SOAL</th><th>JAWABAN BENAR</th><th>SALAH 1</th><th>SALAH 2</th><th>SALAH 3</th><th>LEVEL</th><th>AKSI</th></tr></thead>
+                    <tbody id="q-body"></tbody>
+                </table>
+            </div>
+        </div>
+        <button class="btn" style="position: absolute; bottom: 25px; left: 30px;" onclick="app.showScreen('screen-menu')">⬅ BACK TO MENU</button>
+    </div>
+
+    <div id="custom-modal" class="hidden">
+        <div class="modal-content">
+            <h3 id="modal-title" class="modal-title">INFO</h3>
+            <p id="modal-body" style="font-size: 1.2rem; margin-bottom: 2rem;"></p>
+            <div id="modal-actions" class="flex justify-center" style="gap: 10px;">
+                <button class="btn primary" onclick="app.closeModal()">OK</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="question-modal" class="hidden" style="position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.9); z-index: 1000; display: flex; align-items: center; justify-content: center;">
+        <div class="glass-card" style="width: 90%; max-width: 600px;">
+            <h3 style="color: var(--neon-green); font-size: 1.8rem; margin-bottom: 1rem;">EDITOR SOAL</h3>
+            <input type="text" id="q-soal" placeholder="Pertanyaan">
+            <input type="text" id="q-benar" placeholder="Jawaban Benar" style="border-color: var(--neon-green);">
+            <input type="text" id="q-salah1" placeholder="Pengecoh 1" style="border-color: var(--neon-red);">
+            <input type="text" id="q-salah2" placeholder="Pengecoh 2" style="border-color: var(--neon-red);">
+            <input type="text" id="q-salah3" placeholder="Pengecoh 3" style="border-color: var(--neon-red);">
+            <select id="q-level">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+            </select>
+            <div class="flex" style="gap: 10px; margin-top: 1rem;">
+                <button class="btn primary w-full" onclick="app.saveQuestion()">SIMPAN</button>
+                <button class="btn w-full" onclick="document.getElementById('question-modal').classList.add('hidden')">BATAL</button>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        const defaultQuestions = [
+            // Matematika
+            { soal: "Berapa hasil dari 15 x 4?", pilihan: ["60", "45", "50", "70"], jawaban: "60", level: "easy", mapel: "Matematika" },
+            { soal: "Akar kuadrat dari 144 adalah?", pilihan: ["12", "14", "10", "16"], jawaban: "12", level: "medium", mapel: "Matematika" },
+            { soal: "Berapa 25% dari 200?", pilihan: ["50", "25", "100", "75"], jawaban: "50", level: "medium", mapel: "Matematika" },
+            { soal: "Hasil dari 8 x 7 adalah...", pilihan: ["56", "54", "64", "48"], jawaban: "56", level: "easy", mapel: "Matematika" },
+            
+            // Bahasa Indonesia
+            { soal: "Majas melebih-lebihkan sesuatu disebut...", pilihan: ["Hiperbola", "Metafora", "Personifikasi", "Ironi"], jawaban: "Hiperbola", level: "easy", mapel: "Bahasa Indonesia" },
+            { soal: "Lawan kata (antonim) dari 'Proaktif' adalah...", pilihan: ["Reaktif", "Pasif", "Kreatif", "Positif"], jawaban: "Pasif", level: "hard", mapel: "Bahasa Indonesia" },
+            { soal: "Sinonim dari kata 'Pintar' adalah...", pilihan: ["Cerdas", "Rajin", "Jujur", "Tangkas"], jawaban: "Cerdas", level: "easy", mapel: "Bahasa Indonesia" },
+            
+            // Bahasa Inggris
+            { soal: "What is the past tense of 'Go'?", pilihan: ["Went", "Gone", "Going", "Goes"], jawaban: "Went", level: "easy", mapel: "Bahasa Inggris" },
+            { soal: "The synonym of 'Beautiful' is...", pilihan: ["Pretty", "Ugly", "Bad", "Sad"], jawaban: "Pretty", level: "medium", mapel: "Bahasa Inggris" },
+            { soal: "What is the opposite of 'Hot'?", pilihan: ["Cold", "Warm", "Cool", "Freeze"], jawaban: "Cold", level: "easy", mapel: "Bahasa Inggris" },
+            { soal: "The plural form of 'Child' is...", pilihan: ["Children", "Childs", "Childrens", "Child"], jawaban: "Children", level: "medium", mapel: "Bahasa Inggris" },
+            
+            // Agama Islam
+            { soal: "Malaikat yang bertugas membagi rezeki adalah...", pilihan: ["Mikail", "Jibril", "Israfil", "Izrail"], jawaban: "Mikail", level: "easy", mapel: "Agama Islam" },
+            { soal: "Rukun Islam yang keempat adalah...", pilihan: ["Puasa", "Zakat", "Haji", "Sholat"], jawaban: "Puasa", level: "easy", mapel: "Agama Islam" },
+            
+            // Agama Kristen
+            { soal: "Tempat Yesus disalibkan adalah...", pilihan: ["Golgota", "Nazaret", "Betlehem", "Yerikho"], jawaban: "Golgota", level: "medium", mapel: "Agama Kristen" },
+            { soal: "Hari perayaan kelahiran Yesus Kristus adalah...", pilihan: ["Natal", "Paskah", "Jumat Agung", "Kenaikan"], jawaban: "Natal", level: "easy", mapel: "Agama Kristen" },
+            
+            // Olahraga
+            { soal: "Induk organisasi sepak bola dunia adalah...", pilihan: ["FIFA", "FIBA", "BWF", "FIVB"], jawaban: "FIFA", level: "easy", mapel: "Olahraga" },
+            { soal: "Lari estafet menggunakan alat bantu berupa...", pilihan: ["Tongkat", "Bola", "Tali", "Kain"], jawaban: "Tongkat", level: "easy", mapel: "Olahraga" },
+            { soal: "Induk organisasi bulu tangkis dunia adalah...", pilihan: ["BWF", "FIFA", "FIBA", "ITF"], jawaban: "BWF", level: "medium", mapel: "Olahraga" },
+            { soal: "Jumlah pemain bola voli dalam satu regu adalah...", pilihan: ["6 Orang", "5 Orang", "11 Orang", "7 Orang"], jawaban: "6 Orang", level: "easy", mapel: "Olahraga" },
+            
+            // Seni Budaya
+            { soal: "Alat musik Tifa berasal dari daerah...", pilihan: ["Papua", "Jawa Barat", "Sumatera Barat", "Bali"], jawaban: "Papua", level: "easy", mapel: "Seni Budaya" },
+            { soal: "Kain Batik secara tradisional banyak berasal dari...", pilihan: ["Pulau Jawa", "Kalimantan", "Sumatera", "Sulawesi"], jawaban: "Pulau Jawa", level: "easy", mapel: "Seni Budaya" },
+            { soal: "Yang termasuk warna primer adalah...", pilihan: ["Merah, Kuning, Biru", "Hijau, Ungu, Oranye", "Hitam, Putih, Abu", "Coklat, Pink, Emas"], jawaban: "Merah, Kuning, Biru", level: "medium", mapel: "Seni Budaya" },
+            
+            // IPAS
+            { soal: "Proses tumbuhan membuat makanan sendiri disebut...", pilihan: ["Fotosintesis", "Respirasi", "Transpirasi", "Ekskresi"], jawaban: "Fotosintesis", level: "medium", mapel: "IPAS" },
+            { soal: "Perubahan wujud benda cair menjadi gas disebut...", pilihan: ["Menguap", "Membeku", "Mencair", "Menyublim"], jawaban: "Menguap", level: "easy", mapel: "IPAS" },
+            { soal: "Pusat tata surya kita adalah...", pilihan: ["Matahari", "Bumi", "Bulan", "Jupiter"], jawaban: "Matahari", level: "easy", mapel: "IPAS" },
+            
+            // Informatika
+            { soal: "Perangkat keras komputer yang berfungsi sebagai otak adalah...", pilihan: ["CPU", "RAM", "Monitor", "Keyboard"], jawaban: "CPU", level: "easy", mapel: "Informatika" },
+            { soal: "Kepanjangan dari WWW pada internet adalah...", pilihan: ["World Wide Web", "World Web Wide", "Web World Wide", "Wide World Web"], jawaban: "World Wide Web", level: "medium", mapel: "Informatika" },
+            { soal: "Contoh perangkat keluaran (Output Device) adalah...", pilihan: ["Monitor", "Mouse", "Keyboard", "Scanner"], jawaban: "Monitor", level: "easy", mapel: "Informatika" },
+            
+            // Observasi Lingkungan SMK 2 Mantangai
+            { soal: "SMKN 2 Mantangai terletak di kabupaten...", pilihan: ["Kapuas", "Pulang Pisau", "Palangka Raya", "Gunung Mas"], jawaban: "Kapuas", level: "medium", mapel: "Observasi" },
+            { soal: "Kondisi lahan di wilayah SMKN 2 Mantangai umumnya adalah lahan...", pilihan: ["Gambut", "Pasir", "Batu Kapur", "Tanah Merah"], jawaban: "Gambut", level: "hard", mapel: "Observasi" },
+            { soal: "SMKN 2 Mantangai berada di wilayah provinsi...", pilihan: ["Kalimantan Tengah", "Kalimantan Selatan", "Kalimantan Barat", "Kalimantan Timur"], jawaban: "Kalimantan Tengah", level: "easy", mapel: "Observasi" },
+            
+            // Muatan Lokal
+            { soal: "Senjata tradisional khas suku Dayak adalah...", pilihan: ["Mandau", "Keris", "Celurit", "Rencong"], jawaban: "Mandau", level: "easy", mapel: "Muatan Lokal" },
+            { soal: "Tarian pergaulan daerah Kalimantan Tengah adalah...", pilihan: ["Manasai", "Kecak", "Saman", "Piring"], jawaban: "Manasai", level: "medium", mapel: "Muatan Lokal" },
+            { soal: "Ibukota provinsi Kalimantan Tengah adalah...", pilihan: ["Palangka Raya", "Banjarmasin", "Pontianak", "Samarinda"], jawaban: "Palangka Raya", level: "easy", mapel: "Muatan Lokal" },
+            
+            // Agribisnis Tanaman Pangan dan Hortikultura (ATPH)
+            { soal: "Tanaman yang termasuk kelompok hortikultura adalah...", pilihan: ["Tomat", "Padi", "Jagung", "Gandum"], jawaban: "Tomat", level: "medium", mapel: "ATPH" },
+            { soal: "Cara perbanyakan vegetatif buatan yang benar adalah...", pilihan: ["Mencangkok", "Menyemai Biji", "Spora", "Tunas"], jawaban: "Mencangkok", level: "hard", mapel: "ATPH" },
+            { soal: "Pupuk yang banyak mengandung unsur Nitrogen untuk daun adalah...", pilihan: ["Urea", "TSP", "KCL", "Kompos"], jawaban: "Urea", level: "hard", mapel: "ATPH" },
+            { soal: "Tanaman palawija yang kaya protein nabati adalah...", pilihan: ["Kedelai", "Padi", "Singkong", "Gandum"], jawaban: "Kedelai", level: "medium", mapel: "ATPH" },
+            
+            // Agribisnis Tanaman Perkebunan (ATP)
+            { soal: "Tanaman perkebunan penghasil minyak goreng adalah...", pilihan: ["Kelapa Sawit", "Karet", "Kopi", "Kakao"], jawaban: "Kelapa Sawit", level: "easy", mapel: "ATP" },
+            { soal: "Hama utama pada buah kakao adalah...", pilihan: ["Penggerek Buah", "Tikus", "Wereng", "Walang Sangit"], jawaban: "Penggerek Buah", level: "hard", mapel: "ATP" },
+            { soal: "Hasil sadapan dari pohon karet berupa getah disebut...", pilihan: ["Lateks", "Resin", "Gondorukem", "Nira"], jawaban: "Lateks", level: "medium", mapel: "ATP" }
+        ];
+
+        const AudioEngine = {
+            ctx: null,
+            init: function() {
+                try {
+                    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+                    if(!this.ctx) this.ctx = new AudioContext();
+                    if(this.ctx.state === 'suspended') this.ctx.resume();
+                } catch(e) { console.log('Audio API tidak didukung di browser ini.'); }
+            },
+            playTone: function(freq, type, duration) {
+                if(!this.ctx) return;
+                try {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = type;
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
+                    gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + duration);
+                } catch(e) {}
+            },
+            playHover: function() { this.playTone(400, 'sine', 0.1); },
+            playCorrect: function() { 
+                this.playTone(600, 'sine', 0.1); 
+                setTimeout(() => this.playTone(800, 'sine', 0.2), 100);
+            },
+            playWrong: function() { this.playTone(200, 'sawtooth', 0.3); },
+            playAlarm: function() { this.playTone(900, 'square', 0.2); },
+            playVictory: function() {
+                this.playTone(400, 'sine', 0.2);
+                setTimeout(() => this.playTone(500, 'sine', 0.2), 200);
+                setTimeout(() => this.playTone(600, 'sine', 0.4), 400);
+            }
+        };
+
+        const app = {
+            state: {
+                playerCount: 1,
+                players: [],
+                timer: 45,
+                level: 'easy',
+                questions: [],
+                leaderboard: [],
+                secretTaps: 0,
+                secretTapTimer: null,
+                currentLbView: 'chart'
+            },
+            colors: ['#39ff14', '#00e5ff', '#ff073a', '#fffb00'], // Green, Blue, Red, Yellow
+            
+            init: function() {
+                this.loadData();
+                this.buildVirtualKeyboard();
+                this.initFullscreenToggle();
+                this.showScreen('screen-landing');
+                BgEngine.init();
+            },
+
+            loadData: function() {
+                const storedQ = localStorage.getItem('biohazard_questions_v4');
+                if (storedQ) {
+                    this.state.questions = JSON.parse(storedQ);
+                } else {
+                    this.state.questions = [...defaultQuestions];
+                    this.saveData('questions');
+                }
+                const storedLB = localStorage.getItem('biohazard_leaderboard');
+                if(storedLB) this.state.leaderboard = JSON.parse(storedLB);
+            },
+
+            saveData: function(type) {
+                if(type === 'questions') localStorage.setItem('biohazard_questions_v4', JSON.stringify(this.state.questions));
+                if(type === 'leaderboard') localStorage.setItem('biohazard_leaderboard', JSON.stringify(this.state.leaderboard));
+            },
+
+            showScreen: function(id) {
+                document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
+                document.getElementById(id).classList.remove('hidden');
+                document.getElementById('virtual-keyboard').style.display = 'none';
+                
+                if(id !== 'screen-landing') AudioEngine.init();
+
+                if (id === 'screen-game') {
+                    BgEngine.stop();
+                    GameEngine.init(this.state.players, this.state.timer, this.state.level, this.state.questions);
+                } else {
+                    if(!BgEngine.running && id !== 'screen-game' && id !== 'screen-result') BgEngine.start();
+                }
+            },
+
+            showModal: function(title, body, isConfirm=false, onConfirm=null) {
+                document.getElementById('modal-title').innerText = title;
+                document.getElementById('modal-body').innerText = body;
+                const actions = document.getElementById('modal-actions');
+                actions.innerHTML = '';
+                
+                if(isConfirm) {
+                    const btnOk = document.createElement('button');
+                    btnOk.className = 'btn primary'; btnOk.innerText = 'YA';
+                    btnOk.onclick = () => { onConfirm(); this.closeModal(); };
+                    
+                    const btnCancel = document.createElement('button');
+                    btnCancel.className = 'btn danger'; btnCancel.innerText = 'BATAL';
+                    btnCancel.onclick = () => this.closeModal();
+                    
+                    actions.appendChild(btnOk); actions.appendChild(btnCancel);
+                } else {
+                    const btnOk = document.createElement('button');
+                    btnOk.className = 'btn primary'; btnOk.innerText = 'OK';
+                    btnOk.onclick = () => this.closeModal();
+                    actions.appendChild(btnOk);
+                }
+                document.getElementById('custom-modal').classList.remove('hidden');
+            },
+            closeModal: function() {
+                document.getElementById('custom-modal').classList.add('hidden');
+            },
+
+            buildVirtualKeyboard: function() {
+                const layout = [
+                    ['Q','W','E','R','T','Y','U','I','O','P'],
+                    ['A','S','D','F','G','H','J','K','L'],
+                    ['Z','X','C','V','B','N','M','DEL']
+                ];
+                const kb = document.getElementById('virtual-keyboard');
+                kb.innerHTML = '';
+                let activeInput = null;
+
+                document.addEventListener('focusin', (e) => {
+                    if(e.target.tagName === 'INPUT' && e.target.classList.contains('vk-input')) {
+                        activeInput = e.target;
+                        kb.style.display = 'block';
+                    }
+                });
+                
+                document.addEventListener('click', (e) => {
+                    if(!e.target.closest('#virtual-keyboard') && !e.target.classList.contains('vk-input') && !e.target.closest('#player-inputs-container')) {
+                        kb.style.display = 'none';
+                    }
+                });
+
+                layout.forEach(row => {
+                    const rowDiv = document.createElement('div');
+                    rowDiv.className = 'vk-row';
+                    row.forEach(key => {
+                        const btn = document.createElement('div');
+                        btn.className = 'vk-key' + (key==='DEL' ? ' wide' : '');
+                        btn.innerText = key;
+                        btn.onmousedown = (e) => {
+                            e.preventDefault();
+                            AudioEngine.playHover();
+                            if(!activeInput) return;
+                            if(key === 'DEL') {
+                                activeInput.value = activeInput.value.slice(0, -1);
+                            } else {
+                                if(activeInput.value.length < 10) activeInput.value += key;
+                            }
+                        };
+                        btn.ontouchstart = btn.onmousedown;
+                        rowDiv.appendChild(btn);
+                    });
+                    kb.appendChild(rowDiv);
+                });
+            },
+
+            setupPlayers: function(count) {
+                this.state.playerCount = count;
+                const container = document.getElementById('player-inputs-container');
+                container.innerHTML = `<h3 style="color: var(--neon-green); margin-bottom: 0.8rem;">IDENTITAS PEMAIN</h3>`;
+                
+                for(let i=0; i<count; i++) {
+                    const input = document.createElement('input');
+                    input.type = 'text';
+                    input.id = `p-name-${i}`;
+                    input.className = 'vk-input';
+                    input.placeholder = `NAMA PLAYER ${i+1}`;
+                    input.style.borderColor = this.colors[i];
+                    input.style.color = this.colors[i];
+                    input.autocomplete = 'off';
+                    container.appendChild(input);
+                }
+                this.showScreen('screen-setup');
+            },
+
+            startGame: function() {
+                this.state.players = [];
+                for(let i=0; i<this.state.playerCount; i++) {
+                    let name = document.getElementById(`p-name-${i}`).value.trim().toUpperCase();
+                    if(!name) name = `P${i+1}`;
+                    this.state.players.push({
+                        id: i,
+                        name: name,
+                        color: this.colors[i],
+                        score: 0
+                    });
+                }
+                this.state.timer = parseInt(document.getElementById('timer-select').value);
+                this.state.level = document.getElementById('level-select').value;
+                
+                this.showScreen('screen-game');
+            },
+
+            endGame: function(finalPlayers) {
+                finalPlayers.forEach(p => {
+                    this.state.leaderboard.push({
+                        name: p.name,
+                        score: p.score,
+                        mode: `${this.state.playerCount}P`
+                    });
+                });
+                this.state.leaderboard.sort((a,b) => b.score - a.score);
+                if(this.state.leaderboard.length > 20) this.state.leaderboard = this.state.leaderboard.slice(0, 20);
+                this.saveData('leaderboard');
+
+                // Render Dynamic Podium Bar Chart
+                const podium = document.getElementById('result-podium');
+                podium.innerHTML = '';
+                
+                const sorted = [...finalPlayers].sort((a,b) => b.score - a.score);
+                const maxScore = Math.max(...sorted.map(p => p.score), 100);
+                
+                // Rearrange for Olympic style podium (2nd, 1st, 3rd, 4th)
+                let podiumOrder = [];
+                if (sorted.length === 1) podiumOrder = [sorted[0]];
+                else if (sorted.length === 2) podiumOrder = [sorted[1], sorted[0]];
+                else if (sorted.length === 3) podiumOrder = [sorted[1], sorted[0], sorted[2]];
+                else if (sorted.length === 4) podiumOrder = [sorted[1], sorted[0], sorted[2], sorted[3]];
+
+                podiumOrder.forEach((p) => {
+                    const originalRank = sorted.indexOf(p);
+                    const col = document.createElement('div');
+                    col.className = 'podium-column';
+                    
+                    // Dynamic height calculated relative to max score
+                    const heightPercent = Math.max((p.score / maxScore) * 100, 15);
+                    const barHeightPx = Math.round((heightPercent / 100) * 200 + 40);
+                    
+                    let medal = originalRank === 0 ? '🥇' : originalRank === 1 ? '🥈' : originalRank === 2 ? '🥉' : '🎖️';
+                    
+                    col.innerHTML = `
+                        <div style="font-size: 2.2rem; margin-bottom: 4px;">${medal}</div>
+                        <div style="color: ${p.color}; font-size: 1.3rem; font-weight: bold; margin-bottom: 2px;">${p.name}</div>
+                        <div style="font-size: 1.1rem; font-weight: 900; color: #fff; margin-bottom: 8px;">${p.score} PTS</div>
+                        <div class="podium-bar" style="height: ${barHeightPx}px; background: ${p.color}; box-shadow: 0 0 20px ${p.color};">
+                            <span style="opacity: 0.8;">#${originalRank + 1}</span>
+                        </div>
+                    `;
+                    podium.appendChild(col);
+                });
+
+                this.showScreen('screen-result');
+                AudioEngine.playVictory();
+            },
+
+            switchLeaderboardView: function(view) {
+                this.state.currentLbView = view;
+                const tabChart = document.getElementById('tab-chart');
+                const tabTable = document.getElementById('tab-table');
+                const chartView = document.getElementById('lb-chart-view');
+                const tableView = document.getElementById('lb-table-view');
+
+                if (view === 'chart') {
+                    tabChart.classList.add('active');
+                    tabTable.classList.remove('active');
+                    chartView.classList.remove('hidden');
+                    tableView.classList.add('hidden');
+                } else {
+                    tabTable.classList.add('active');
+                    tabChart.classList.remove('active');
+                    tableView.classList.remove('hidden');
+                    chartView.classList.add('hidden');
+                }
+            },
+
+            showLeaderboard: function() {
+                const chartView = document.getElementById('lb-chart-view');
+                const tbody = document.getElementById('lb-body');
+                chartView.innerHTML = '';
+                tbody.innerHTML = '';
+
+                if (this.state.leaderboard.length === 0) {
+                    chartView.innerHTML = `<div style="text-align:center; padding: 2rem; color: #888;">BELUM ADA DATA SKOR</div>`;
+                    tbody.innerHTML = `<tr><td colspan="4" class="text-center" style="color:#888;">BELUM ADA DATA SKOR</td></tr>`;
+                    this.showScreen('screen-leaderboard');
+                    return;
+                }
+
+                // Top score for relative percentage length
+                const maxScore = Math.max(...this.state.leaderboard.map(e => e.score), 100);
+
+                // Bar Chart Visual Colors
+                const rankGradients = [
+                    { start: '#fffb00', end: '#ff7700', glow: 'rgba(255, 251, 0, 0.6)' }, // 1st Gold
+                    { start: '#00e5ff', end: '#0077ff', glow: 'rgba(0, 229, 255, 0.6)' }, // 2nd Cyan
+                    { start: '#bd00ff', end: '#ff073a', glow: 'rgba(189, 0, 255, 0.6)' }, // 3rd Purple
+                    { start: '#39ff14', end: '#00aa55', glow: 'rgba(57, 255, 20, 0.5)' }  // Rest Neon Green
+                ];
+
+                this.state.leaderboard.forEach((entry, i) => {
+                    let grad = rankGradients[Math.min(i, 3)];
+                    let rankBadge = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+                    let percent = Math.max((entry.score / maxScore) * 100, 6);
+
+                    // 1. Generate Diagram Batang Row
+                    const chartRow = document.createElement('div');
+                    chartRow.className = 'chart-row';
+                    chartRow.innerHTML = `
+                        <div class="chart-rank">${rankBadge}</div>
+                        <div class="chart-info">
+                            <span class="chart-name">${entry.name}</span>
+                            <span class="chart-mode">${entry.mode} MODE</span>
+                        </div>
+                        <div class="chart-track">
+                            <div class="chart-bar" id="bar-elem-${i}" style="--bar-color-start: ${grad.start}; --bar-color-end: ${grad.end}; --bar-glow: ${grad.glow}; width: 0%;"></div>
+                        </div>
+                        <div class="chart-value">${entry.score}</div>
+                    `;
+                    chartView.appendChild(chartRow);
+
+                    // Trigger smooth fill animation
+                    setTimeout(() => {
+                        const bar = document.getElementById(`bar-elem-${i}`);
+                        if(bar) bar.style.width = `${percent}%`;
+                    }, 50 * i);
+
+                    // 2. Generate Table Row
+                    const tr = document.createElement('tr');
+                    let color = i===0 ? 'var(--neon-yellow)' : i===1 ? '#00e5ff' : i===2 ? '#bd00ff' : '#fff';
+                    tr.style.color = color;
+                    tr.innerHTML = `
+                        <td class="text-center font-bold">${rankBadge}</td>
+                        <td style="text-align: left; font-weight: bold;">${entry.name}</td>
+                        <td class="text-center font-bold">${entry.score}</td>
+                        <td class="text-center" style="opacity: 0.8;">${entry.mode}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                this.switchLeaderboardView(this.state.currentLbView);
+                this.showScreen('screen-leaderboard');
+            },
+
+            clearLeaderboard: function() {
+                this.showModal('KONFIRMASI', 'Hapus semua data Leaderboard?', true, () => {
+                    this.state.leaderboard = [];
+                    this.saveData('leaderboard');
+                    this.showLeaderboard();
+                });
+            },
+
+            handleSecretTap: function() {
+                const now = Date.now();
+                if(this.state.secretTapTimer && (now - this.state.secretTapTimer > 2000)) {
+                    this.state.secretTaps = 0;
+                }
+                this.state.secretTapTimer = now;
+                this.state.secretTaps++;
+                
+                if(this.state.secretTaps >= 5) {
+                    this.state.secretTaps = 0;
+                    this.renderTeacherMenu();
+                    this.showScreen('screen-teacher');
+                }
+            },
+            
+            renderTeacherMenu: function() {
+                const tbody = document.getElementById('q-body');
+                tbody.innerHTML = '';
+                this.state.questions.forEach((q, i) => {
+                    const tr = document.createElement('tr');
+                    const wrong = q.pilihan.filter(p => p !== q.jawaban);
+                    tr.innerHTML = `
+                        <td style="text-align:left;">${q.soal}</td>
+                        <td style="color:var(--neon-green)">${q.jawaban}</td>
+                        <td>${wrong[0] || '-'}</td>
+                        <td>${wrong[1] || '-'}</td>
+                        <td>${wrong[2] || '-'}</td>
+                        <td>${q.level}</td>
+                        <td>
+                            <button class="btn danger" style="padding: 4px 8px; font-size: 0.75rem;" onclick="app.deleteQuestion(${i})">HAPUS</button>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            },
+
+            showAddQuestion: function() {
+                document.getElementById('q-soal').value = '';
+                document.getElementById('q-benar').value = '';
+                document.getElementById('q-salah1').value = '';
+                document.getElementById('q-salah2').value = '';
+                document.getElementById('q-salah3').value = '';
+                document.getElementById('question-modal').classList.remove('hidden');
+            },
+
+            saveQuestion: function() {
+                const soal = document.getElementById('q-soal').value.trim();
+                const b = document.getElementById('q-benar').value.trim();
+                const s1 = document.getElementById('q-salah1').value.trim();
+                const s2 = document.getElementById('q-salah2').value.trim();
+                const s3 = document.getElementById('q-salah3').value.trim();
+                const level = document.getElementById('q-level').value;
+
+                if(!soal || !b || !s1) {
+                    this.showModal('ERROR', 'Soal, Jawaban Benar, dan minimal 1 Pengecoh harus diisi!');
+                    return;
+                }
+
+                let pilihan = [b, s1];
+                if(s2) pilihan.push(s2);
+                if(s3) pilihan.push(s3);
+                
+                this.state.questions.push({ soal, pilihan, jawaban: b, level, mapel: "Custom" });
+                this.saveData('questions');
+                document.getElementById('question-modal').classList.add('hidden');
+                this.renderTeacherMenu();
+            },
+
+            deleteQuestion: function(index) {
+                this.showModal('KONFIRMASI', 'Hapus soal ini?', true, () => {
+                    this.state.questions.splice(index, 1);
+                    this.saveData('questions');
+                    this.renderTeacherMenu();
+                });
+            },
+
+            resetDefaultQuestions: function() {
+                this.showModal('KONFIRMASI', 'Kembalikan ke soal bawaan sistem? (Soal custom akan hilang)', true, () => {
+                    this.state.questions = JSON.parse(JSON.stringify(defaultQuestions));
+                    this.saveData('questions');
+                    this.renderTeacherMenu();
+                });
+            },
+
+            initFullscreenToggle: function() {
+                const btn = document.getElementById('fullscreen-btn');
+                btn.onclick = () => {
+                    if (!document.fullscreenElement) {
+                        document.documentElement.requestFullscreen().catch(err => {
+                            console.log(`Error requesting fullscreen: ${err.message}`);
+                        });
+                        btn.innerText = '[-] EXIT FULLSCREEN';
+                    } else {
+                        document.exitFullscreen();
+                        btn.innerText = '[ ] FULLSCREEN';
+                    }
+                };
+            }
+        };
+
+        const BgEngine = {
+            canvas: document.getElementById('bg-canvas'),
+            ctx: document.getElementById('bg-canvas').getContext('2d'),
+            particles: [],
+            running: false,
+            
+            init: function() {
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                for(let i=0; i<45; i++) this.particles.push(this.createParticle());
+                this.start();
+            },
+            resize: function() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            },
+            createParticle: function() {
+                return {
+                    x: Math.random() * window.innerWidth,
+                    y: Math.random() * window.innerHeight,
+                    r: Math.random() * 18 + 4,
+                    vx: (Math.random() - 0.5) * 1,
+                    vy: (Math.random() - 0.5) * 1,
+                    color: `rgba(57, 255, 20, ${Math.random() * 0.25 + 0.1})`
+                };
+            },
+            start: function() {
+                if(this.running) return;
+                this.running = true;
+                this.loop();
+            },
+            stop: function() {
+                this.running = false;
+            },
+            loop: function() {
+                if(!BgEngine.running) return;
+                BgEngine.ctx.clearRect(0, 0, BgEngine.canvas.width, BgEngine.canvas.height);
+                BgEngine.particles.forEach(p => {
+                    p.x += p.vx; p.y += p.vy;
+                    if(p.x < -p.r) p.x = BgEngine.canvas.width + p.r;
+                    if(p.x > BgEngine.canvas.width + p.r) p.x = -p.r;
+                    if(p.y < -p.r) p.y = BgEngine.canvas.height + p.r;
+                    if(p.y > BgEngine.canvas.height + p.r) p.y = -p.r;
+                    
+                    BgEngine.ctx.beginPath();
+                    BgEngine.ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                    BgEngine.ctx.fillStyle = p.color;
+                    BgEngine.ctx.shadowBlur = 10;
+                    BgEngine.ctx.shadowColor = 'var(--neon-green)';
+                    BgEngine.ctx.fill();
+                });
+                requestAnimationFrame(BgEngine.loop);
+            }
+        };
+
+        const GameEngine = {
+            canvas: document.getElementById('game-canvas'),
+            ctx: document.getElementById('game-canvas').getContext('2d'),
+            rafId: null,
+            players: [],
+            zones: [],
+            bubbles: [],
+            particles: [],
+            floatingTexts: [],
+            questions: [],
+            timeRemaining: 0,
+            lastTime: 0,
+            shakeAmount: 0,
+
+            buildInterleavedDeck: function(sourceQuestions, recentHistory = []) {
+                let grouped = {};
+                sourceQuestions.forEach(q => {
+                    let cat = q.mapel || 'Campuran';
+                    if(!grouped[cat]) grouped[cat] = [];
+                    grouped[cat].push(q);
+                });
+
+                let categories = Object.keys(grouped);
+                categories.forEach(cat => grouped[cat].sort(() => Math.random() - 0.5));
+                categories.sort(() => Math.random() - 0.5);
+
+                let deck = [];
+                let hasMore = true;
+                while(hasMore) {
+                    hasMore = false;
+                    for(let cat of categories) {
+                        if(grouped[cat].length > 0) {
+                            deck.push(grouped[cat].shift());
+                            hasMore = true;
+                        }
+                    }
+                }
+                
+                if (recentHistory.length > 0) {
+                    let freshQuestions = deck.filter(nq => !recentHistory.includes(nq.soal));
+                    let usedQuestions = deck.filter(nq => recentHistory.includes(nq.soal));
+                    return [...freshQuestions, ...usedQuestions];
+                }
+                return deck;
+            },
+            
+            init: function(players, duration, level, allQuestions) {
+                this.players = players;
+                this.timeRemaining = duration;
+                this.ctx = this.canvas.getContext('2d');
+
+                if(level === 'all') this.questions = [...allQuestions];
+                else this.questions = allQuestions.filter(q => q.level === level);
+                if(this.questions.length === 0) this.questions = [...allQuestions];
+
+                this.resize();
+                window.addEventListener('resize', this.onResize.bind(this));
+                
+                this.setupZones();
+                
+                this.canvas.addEventListener('touchstart', this.handleInput.bind(this), {passive: false});
+                this.canvas.addEventListener('mousedown', this.handleInput.bind(this));
+                this.canvas.addEventListener('pointerdown', this.handleInput.bind(this));
+                
+                this.lastTime = Date.now();
+                this.loop();
+            },
+
+            onResize: function() {
+                if(document.getElementById('screen-game').classList.contains('hidden')) return;
+                this.resize();
+                this.setupZones();
+            },
+
+            resize: function() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            },
+
+            setupZones: function() {
+                const w = this.canvas.width;
+                const h = this.canvas.height;
+                const pCount = this.players.length;
+                this.zones = [];
+
+                this.players.forEach((p, i) => {
+                    let rect = {};
+                    if(pCount === 1) {
+                        rect = {x:0, y:0, w:w, h:h};
+                    } else if(pCount === 2) {
+                        rect = i === 0 ? {x:0, y:0, w:w/2, h:h} : {x:w/2, y:0, w:w/2, h:h};
+                    } else if(pCount === 4) {
+                        if(i===0) rect = {x:0, y:0, w:w/2, h:h/2};
+                        if(i===1) rect = {x:w/2, y:0, w:w/2, h:h/2};
+                        if(i===2) rect = {x:0, y:h/2, w:w/2, h:h/2};
+                        if(i===3) rect = {x:w/2, y:h/2, w:w/2, h:h/2};
+                    }
+                
+                    let interleavedDeck = this.buildInterleavedDeck(this.questions);
+
+                    this.zones.push({
+                        playerIndex: i,
+                        rect: rect,
+                        color: p.color,
+                        currentQ: null,
+                        deck: interleavedDeck,
+                        history: []
+                    });
+                    
+                    this.assignQuestion(i);
+                });
+            },
+
+            assignQuestion: function(zoneIndex) {
+                const zone = this.zones[zoneIndex];
+                this.bubbles = this.bubbles.filter(b => b.zoneIndex !== zoneIndex);
+                
+                let activeQuestions = this.zones
+                    .filter((z, idx) => idx !== zoneIndex && z.currentQ)
+                    .map(z => z.currentQ.soal);
+
+                let q = null;
+                let foundIdx = -1;
+
+                for (let i = 0; i < zone.deck.length; i++) {
+                    if (!activeQuestions.includes(zone.deck[i].soal)) {
+                        q = zone.deck[i];
+                        foundIdx = i;
+                        break;
+                    }
+                }
+
+                if (!q) {
+                    let recentHistory = zone.history.slice(-15);
+                    zone.deck = this.buildInterleavedDeck(this.questions, recentHistory);
+                    
+                    for (let i = 0; i < zone.deck.length; i++) {
+                        if (!activeQuestions.includes(zone.deck[i].soal)) {
+                            q = zone.deck[i];
+                            foundIdx = i;
+                            break;
+                        }
+                    }
+                    if (!q) {
+                        q = zone.deck[0];
+                        foundIdx = 0;
+                    }
+                }
+
+                zone.deck.splice(foundIdx, 1);
+                zone.currentQ = q;
+                zone.history.push(q.soal);
+
+                let opts = [...q.pilihan].sort(() => Math.random() - 0.5);
+                const radius = Math.min(zone.rect.w, zone.rect.h) * 0.12;
+                    
+                opts.forEach((opt) => {
+                    let maxAttempts = 50;
+                    let x, y;
+                    let validPosition = false;
+
+                    while(!validPosition && maxAttempts > 0) {
+                        x = zone.rect.x + radius + Math.random() * (zone.rect.w - radius*2);
+                        y = zone.rect.y + radius + Math.random() * (zone.rect.h - radius*2 - 100);
+                        
+                        validPosition = true;
+                        for(let b of this.bubbles) {
+                            if(b.zoneIndex === zoneIndex) {
+                                let dx = x - b.x;
+                                let dy = y - b.y;
+                                let dist = Math.sqrt(dx*dx + dy*dy);
+                                if(dist < (radius * 2) + 15) {
+                                    validPosition = false;
+                                    break;
+                                }
+                            }
+                        }
+                        maxAttempts--;
+                    }
+
+                    let vx = (Math.random() - 0.5) * 1.5;
+                    let vy = (Math.random() - 0.5) * 1.5;
+                    if(Math.abs(vx) < 0.3) vx = vx < 0 ? -0.3 : 0.3;
+                    if(Math.abs(vy) < 0.3) vy = vy < 0 ? -0.3 : 0.3;
+
+                    this.bubbles.push({
+                        zoneIndex: zoneIndex,
+                        text: opt,
+                        isCorrect: opt === q.jawaban,
+                        x: x,
+                        y: y,
+                        r: radius,
+                        baseR: radius,
+                        vx: vx,
+                        vy: vy,
+                        pulse: Math.random() * Math.PI * 2
+                    });
+                });
+            },
+
+            handleInput: function(e) {
+                e.preventDefault();
+                const rect = this.canvas.getBoundingClientRect();
+                let points = [];
+                
+                if(e.type === 'touchstart') {
+                    for(let i=0; i<e.changedTouches.length; i++) {
+                        points.push({
+                            x: e.changedTouches[i].clientX - rect.left,
+                            y: e.changedTouches[i].clientY - rect.top
+                        });
+                    }
+                } else if(e.type === 'mousedown' || e.type === 'pointerdown') {
+                    points.push({
+                        x: e.clientX - rect.left,
+                        y: e.clientY - rect.top
+                    });
+                }
+
+                points.forEach(pt => {
+                    let hitZone = -1;
+                    for(let i=0; i<this.zones.length; i++) {
+                        const z = this.zones[i].rect;
+                        if(pt.x >= z.x && pt.x <= z.x + z.w && pt.y >= z.y && pt.y <= z.y + z.h) {
+                            hitZone = i; break;
+                        }
+                    }
+
+                    if(hitZone === -1) return;
+
+                    for(let i=0; i<this.bubbles.length; i++) {
+                        const b = this.bubbles[i];
+                        if(b.zoneIndex !== hitZone) continue;
+                        
+                        const dx = pt.x - b.x;
+                        const dy = pt.y - b.y;
+                        if(dx*dx + dy*dy <= b.r * b.r) {
+                            this.bubbleHit(b, hitZone, pt.x, pt.y);
+                            break;
+                        }
+                    }
+                });
+            },
+
+            bubbleHit: function(bubble, zoneIndex, tx, ty) {
+                const p = this.players[zoneIndex];
+                const z = this.zones[zoneIndex];
+                
+                if(bubble.isCorrect) {
+                    p.score += 100;
+                    AudioEngine.playCorrect();
+                    this.createParticles(tx, ty, z.color, 30);
+                    this.floatingTexts.push({x: tx, y: ty, text: '+100', color: z.color, life: 1, maxLife: 1});
+                    this.assignQuestion(zoneIndex);
+                } else {
+                    p.score -= 50;
+                    if(p.score < 0) p.score = 0;
+                    AudioEngine.playWrong();
+                    this.createParticles(tx, ty, '#ff073a', 15);
+                    this.floatingTexts.push({x: tx, y: ty, text: '-50', color: '#ff073a', life: 1, maxLife: 1});
+                    this.shakeAmount = 10;
+                    z.flash = 1;
+                    this.assignQuestion(zoneIndex);
+                }
+            },
+
+            createParticles: function(x, y, color, count) {
+                for(let i=0; i<count; i++) {
+                    this.particles.push({
+                        x: x, y: y,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10,
+                        life: 1,
+                        color: color,
+                        r: Math.random() * 5 + 2
+                    });
+                }
+            },
+
+            loop: function() {
+                if(this.timeRemaining <= 0) return;
+                
+                const now = Date.now();
+                const dt = (now - this.lastTime) / 1000;
+                this.lastTime = now;
+                
+                this.timeRemaining -= dt;
+                if(this.timeRemaining <= 0) {
+                    this.timeRemaining = 0;
+                    this.endGame();
+                    return;
+                }
+
+                this.update(dt);
+                this.render();
+                
+                this.rafId = requestAnimationFrame(this.loop.bind(this));
+            },
+
+            update: function(dt) {
+                this.bubbles.forEach(b => {
+                    b.x += b.vx;
+                    b.y += b.vy;
+                    b.pulse += dt * 2.5;
+                    b.r = b.baseR + Math.sin(b.pulse) * (b.baseR * 0.1);
+
+                    const z = this.zones[b.zoneIndex].rect;
+                    if(b.x - b.r < z.x) { b.x = z.x + b.r; b.vx *= -1; }
+                    if(b.x + b.r > z.x + z.w) { b.x = z.x + z.w - b.r; b.vx *= -1; }
+                    
+                    const textHeight = 80;
+                    if(b.y - b.r < z.y) { b.y = z.y + b.r; b.vy *= -1; }
+                    if(b.y + b.r > z.y + z.h - textHeight) { b.y = z.y + z.h - textHeight - b.r; b.vy *= -1; }
+                });
+
+                for(let i=0; i<this.bubbles.length; i++) {
+                    for(let j=i+1; j<this.bubbles.length; j++) {
+                        let b1 = this.bubbles[i];
+                        let b2 = this.bubbles[j];
+                        
+                        if(b1.zoneIndex !== b2.zoneIndex) continue;
+
+                        let dx = b2.x - b1.x;
+                        let dy = b2.y - b1.y;
+                        let dist = Math.sqrt(dx*dx + dy*dy);
+                        let minDist = b1.r + b2.r + 5;
+
+                        if(dist < minDist) {
+                            let overlap = minDist - dist;
+                            let nx = dx / dist;
+                            let ny = dy / dist;
+                            
+                            b1.x -= (nx * overlap) / 2;
+                            b1.y -= (ny * overlap) / 2;
+                            b2.x += (nx * overlap) / 2;
+                            b2.y += (ny * overlap) / 2;
+
+                            let tempVx = b1.vx;
+                            let tempVy = b1.vy;
+                            b1.vx = b2.vx;
+                            b1.vy = b2.vy;
+                            b2.vx = tempVx;
+                            b2.vy = tempVy;
+                        }
+                    }
+                    
+                    let b = this.bubbles[i];
+                    let speed = Math.sqrt(b.vx*b.vx + b.vy*b.vy);
+                    if(speed > 1.5) { 
+                        b.vx = (b.vx / speed) * 1.5;
+                        b.vy = (b.vy / speed) * 1.5;
+                    }
+                }
+
+                for(let i=this.particles.length-1; i>=0; i--) {
+                    let p = this.particles[i];
+                    p.x += p.vx; p.y += p.vy;
+                    p.life -= dt * 1.5;
+                    if(p.life <= 0) this.particles.splice(i, 1);
+                }
+
+                for(let i=this.floatingTexts.length-1; i>=0; i--) {
+                    let f = this.floatingTexts[i];
+                    f.y -= dt * 50;
+                    f.life -= dt;
+                    if(f.life <= 0) this.floatingTexts.splice(i, 1);
+                }
+
+                if(this.shakeAmount > 0) {
+                    this.shakeAmount -= dt * 30;
+                    if(this.shakeAmount < 0) this.shakeAmount = 0;
+                }
+
+                if(this.timeRemaining <= 10.5 && this.timeRemaining > 0) {
+                    let currentSec = Math.ceil(this.timeRemaining);
+                    if(this._lastAlarmSec !== currentSec) {
+                        AudioEngine.playAlarm();
+                        this._lastAlarmSec = currentSec;
+                    }
+                }
+            },
+
+            render: function() {
+                this.ctx.save();
+                
+                if(this.shakeAmount > 0) {
+                    let dx = (Math.random() - 0.5) * this.shakeAmount;
+                    let dy = (Math.random() - 0.5) * this.shakeAmount;
+                    this.ctx.translate(dx, dy);
+                }
+
+                this.ctx.fillStyle = '#050a0a';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+                this.ctx.strokeStyle = '#112222';
+                this.ctx.lineWidth = 1;
+                for(let i=0; i<this.canvas.width; i+=50) {
+                    this.ctx.beginPath(); this.ctx.moveTo(i,0); this.ctx.lineTo(i, this.canvas.height); this.ctx.stroke();
+                }
+                for(let j=0; j<this.canvas.height; j+=50) {
+                    this.ctx.beginPath(); this.ctx.moveTo(0,j); this.ctx.lineTo(this.canvas.width, j); this.ctx.stroke();
+                }
+
+                this.zones.forEach((z, i) => {
+                    this.ctx.strokeStyle = z.color;
+                    this.ctx.lineWidth = 4;
+                    this.ctx.strokeRect(z.rect.x, z.rect.y, z.rect.w, z.rect.h);
+                    
+                    if(z.flash > 0) {
+                        this.ctx.fillStyle = `rgba(255, 7, 58, ${z.flash * 0.3})`;
+                        this.ctx.fillRect(z.rect.x, z.rect.y, z.rect.w, z.rect.h);
+                        z.flash -= 0.05;
+                    }
+
+                    this.ctx.fillStyle = z.color;
+                    this.ctx.font = 'bold 24px Arial';
+                    this.ctx.textAlign = 'left';
+                    this.ctx.textBaseline = 'top';
+                    this.ctx.fillText(this.players[i].name, z.rect.x + 10, z.rect.y + 10);
+                    
+                    this.ctx.font = 'bold 36px Arial';
+                    this.ctx.textAlign = 'right';
+                    this.ctx.fillText(this.players[i].score, z.rect.x + z.rect.w - 10, z.rect.y + 10);
+
+                    if(z.currentQ) {
+                        this.ctx.fillStyle = '#fff';
+                        this.ctx.font = 'bold 28px Arial';
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'bottom';
+                        
+                        let words = z.currentQ.soal.split(' ');
+                        let lines = [];
+                        let line = '';
+                        for(let w=0; w<words.length; w++) {
+                            let testLine = line + words[w] + ' ';
+                            let metrics = this.ctx.measureText(testLine);
+                            if(metrics.width > z.rect.w - 40 && w > 0) {
+                                lines.push(line);
+                                line = words[w] + ' ';
+                            } else {
+                                line = testLine;
+                            }
+                        }
+                        lines.push(line);
+                        
+                        let yStart = z.rect.y + z.rect.h - 20 - ((lines.length-1) * 35);
+                        lines.forEach((l, idx) => {
+                            this.ctx.fillText(l, z.rect.x + z.rect.w/2, yStart + (idx*35));
+                        });
+                    }
+                });
+
+                this.bubbles.forEach(b => {
+                    const zColor = this.zones[b.zoneIndex].color;
+                    
+                    this.ctx.shadowBlur = 15;
+                    this.ctx.shadowColor = zColor;
+                    
+                    this.ctx.beginPath();
+                    this.ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+                    this.ctx.fillStyle = `rgba(10,20,10,0.8)`;
+                    this.ctx.fill();
+                    
+                    this.ctx.lineWidth = 3;
+                    this.ctx.strokeStyle = zColor;
+                    this.ctx.stroke();
+
+                    this.ctx.shadowBlur = 0;
+                    this.ctx.fillStyle = '#fff';
+                    let fSize = b.r * 0.4;
+                    if(b.text.length > 8) fSize *= 0.7;
+                    this.ctx.font = `bold ${fSize}px Arial`;
+                    this.ctx.textAlign = 'center';
+                    this.ctx.textBaseline = 'middle';
+                    this.ctx.fillText(b.text, b.x, b.y);
+                });
+
+                this.ctx.globalCompositeOperation = 'lighter';
+                this.particles.forEach(p => {
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.globalAlpha = p.life;
+                    this.ctx.fill();
+                });
+                this.ctx.globalAlpha = 1.0;
+                this.ctx.globalCompositeOperation = 'source-over';
+
+                this.floatingTexts.forEach(f => {
+                    this.ctx.fillStyle = f.color;
+                    this.ctx.globalAlpha = f.life / f.maxLife;
+                    this.ctx.font = 'bold 40px Arial';
+                    this.ctx.textAlign = 'center';
+                    this.ctx.fillText(f.text, f.x, f.y);
+                });
+                this.ctx.globalAlpha = 1.0;
+
+                this.ctx.fillStyle = this.timeRemaining <= 10 ? '#ff073a' : '#39ff14';
+                if(this.timeRemaining <= 10 && Math.floor(this.timeRemaining * 10) % 2 === 0) {
+                    this.ctx.fillStyle = '#fff';
+                }
+                this.ctx.font = '900 80px Arial';
+                this.ctx.textAlign = 'center';
+                this.ctx.textBaseline = 'middle';
+                this.ctx.shadowBlur = 20;
+                this.ctx.shadowColor = this.ctx.fillStyle;
+                
+                let m = Math.floor(this.timeRemaining / 60);
+                let s = Math.floor(this.timeRemaining % 60);
+                let timeStr = `${m}:${s < 10 ? '0' : ''}${s}`;
+                this.ctx.fillText(timeStr, this.canvas.width/2, this.canvas.height/2);
+                this.ctx.shadowBlur = 0;
+
+                this.ctx.restore();
+            },
+
+            endGame: function() {
+                cancelAnimationFrame(this.rafId);
+                const clone = this.canvas.cloneNode(true);
+                this.canvas.parentNode.replaceChild(clone, this.canvas);
+                this.canvas = clone;
+                
+                app.endGame(this.players);
+            }
+        };
+
+        window.onload = () => {
+            app.init();
+        };
+    </script>
+</body>
+</html>
